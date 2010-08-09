@@ -25,7 +25,7 @@
 
 ;;; Commentary
 
-;; For commentary please see the README.md or
+;; For commentary please see the README.org or
 ;; http://github.com/developernotes/showoff-mode#readme
 
 ;;; Installation

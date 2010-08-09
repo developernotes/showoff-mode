@@ -1,7 +1,7 @@
 * Overview
   showoff-mode is a major-mode for editing [[http://github.com/schacon/showoff][showoff]] presentations, utilizing markdown-mode for font locking.
 
-*** interactive methods with keybindings:
+*** Interactive methods with keybindings:
 
 - showoff-create-presentation
 - showoff-add-slide

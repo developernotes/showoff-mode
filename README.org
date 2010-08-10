@@ -3,11 +3,11 @@
 
 *** Interactive methods with keybindings:
 
-- showoff-create-presentation
-- showoff-add-slide
-- showoff-serve
-- showoff-view-presentation
-- showoff-view-manifest
+- =M-x showoff-create-presentation=
+- =M-x showoff-add-slide= or =C-c ;a=
+- =M-x showoff-serve= or =C-c ;s=
+- =M-x showoff-view-presentation= or =C-c ;v=
+- =M-x showoff-view-manifest= or =C-c ;m=
 
 ** Installation:
 

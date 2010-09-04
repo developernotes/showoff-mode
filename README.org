@@ -8,6 +8,7 @@
 - =M-x showoff-serve= or =C-c ;s=
 - =M-x showoff-view-presentation= or =C-c ;v=
 - =M-x showoff-view-manifest= or =C-c ;m=
+- =M-x showoff-goto-file= or =C-c ;f=
 
 ** Installation:
 

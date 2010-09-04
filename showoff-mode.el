@@ -79,6 +79,17 @@
   :type 'string
   :group 'showoff)
 
+(defvar showoff-use-file-cache t
+  "Should `showoff-goto-file' keep a local cache of files?")
+
+(defvar showoff-project-files '()
+  "Used internally to cache the files in a project.")
+
+(defvar showoff-completing-function-alist '((ido ido-completing-read)
+                                              (icicles  icicle-completing-read)
+                                              (none completing-read))
+  "The function to call to read file names from the user")
+
 (defvar showoff-mode-map (make-keymap)
   "Keymap for showoff major mode.")
 
@@ -107,9 +118,9 @@
   (interactive)
   (if (get-buffer showoff-serve-buffer-name)
       (browse-url showoff-browse-url)
-      (progn
-        (showoff-serve)
-        (browse-url showoff-browse-url))))
+    (progn
+      (showoff-serve)
+      (browse-url showoff-browse-url))))
 
 (defun showoff-create-presentation (project directory)
   "Creates a new showoff presentation"
@@ -118,10 +129,47 @@
   (shell-command-to-string (format "showoff create %s" project))
   (find-file (format "%s/%s/%s/%s" directory project showoff-default-folder showoff-default-file)))
 
+(defun showoff-goto-file ()
+  "Uses your completing read to quickly jump to a showoff file in a project"
+  (interactive)
+  (let ((root (showoff-root)))
+    (find-file
+     (concat
+      (showoff-completing-read
+       "Find file: "
+       (showoff-cached-project-files root))))))
+
+(defun showoff-cached-project-files (&optional root)
+  "Finds and caches all files in a given project."
+  (cond
+   ((null showoff-use-file-cache) (showoff-project-files root))
+   ((equal (showoff-root) (car showoff-project-files))
+    (cdr showoff-project-files))
+   (t (cdr (setq showoff-project-files
+                 `(,root . ,(showoff-project-files root)))))))
+
+(defun showoff-project-files (root)
+  "Finds all files in a given project."
+  (split-string
+   (shell-command-to-string (format "find %s -name \"*.md\" -type f" root))
+   "\n" t))
+
+(defun showoff-completing-read (&rest args)
+  "Uses `showoff-completing-function-alist' to call the appropriate completing
+function."
+  (let ((reading-fn
+         (cadr (assoc showoff-completing-library
+                      showoff-completing-function-alist))))
+    (apply (symbol-function reading-fn) args)))
+
+(defvar showoff-completing-library 'ido
+  "The library `showoff-goto-file' should use for
+completing filenames (`ido' by default)")
+
 (defun showoff-root ()
   (let ((root (locate-dominating-file default-directory showoff-manifest-file)))
     (if root
-        root
+        (expand-file-name root)
       (message "You don't appear to be in a showoff directory.") nil)))
 
 (define-derived-mode showoff-mode markdown-mode
@@ -132,5 +180,6 @@
 (define-key showoff-mode-map (kbd "C-c ;m") 'showoff-view-manifest)
 (define-key showoff-mode-map (kbd "C-c ;s") 'showoff-serve)
 (define-key showoff-mode-map (kbd "C-c ;v") 'showoff-view-presentation)
+(define-key showoff-mode-map (kbd "C-c ;f") 'showoff-goto-file)
 
 (provide 'showoff-mode)

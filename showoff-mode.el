@@ -90,6 +90,10 @@
                                               (none completing-read))
   "The function to call to read file names from the user")
 
+(defvar showoff-completing-library 'ido
+  "The library `showoff-goto-file' should use for
+completing filenames (`ido' by default)")
+
 (defvar showoff-mode-map (make-keymap)
   "Keymap for showoff major mode.")
 
@@ -161,10 +165,6 @@ function."
          (cadr (assoc showoff-completing-library
                       showoff-completing-function-alist))))
     (apply (symbol-function reading-fn) args)))
-
-(defvar showoff-completing-library 'ido
-  "The library `showoff-goto-file' should use for
-completing filenames (`ido' by default)")
 
 (defun showoff-root ()
   (let ((root (locate-dominating-file default-directory showoff-manifest-file)))
